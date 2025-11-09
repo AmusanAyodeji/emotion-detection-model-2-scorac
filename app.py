@@ -26,9 +26,9 @@ def init_db():
 init_db()
 
 def preprocess_img(file):
-    img = Image.open(file).convert('L').resize((28,28))
+    img = Image.open(file).convert('L').resize((48,48))
     img_arr = np.array(img) / 255.0
-    img_arr = np.expand_dims(img_arr, axis=-1)
+    img_arr = np.reshape(img_arr, (48,48,1))
     img_arr = np.expand_dims(img_arr, axis=0)
     return img_arr
 
