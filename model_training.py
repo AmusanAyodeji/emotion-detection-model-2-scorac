@@ -1,54 +1,30 @@
-import os
 import numpy as np
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
-from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.datasets import mnist  # Use actual emotion dataset in your case
 
-DATASET_ROOT = "fer2013"         # Rename if your root folder is named differently
-IMG_SIZE = (48, 48)              # FER standard size
+# Load & preprocess dataset (replace with real data for emotion detection)
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train = np.expand_dims(x_train, -1) / 255.0
+x_test = np.expand_dims(x_test, -1) / 255.0
+num_classes = 10            # Replace with your emotion classes
+y_train = to_categorical(y_train, num_classes)
+y_test = to_categorical(y_test, num_classes)
 
-# List emotion folders inside train/
-emotion_labels = sorted(os.listdir(os.path.join(DATASET_ROOT, "train")))
-num_classes = len(emotion_labels)
-print("Emotion classes:", emotion_labels)
-
-def load_data(subset):
-    images = []
-    labels = []
-    for idx, emotion in enumerate(emotion_labels):
-        emotion_folder = os.path.join(DATASET_ROOT, subset, emotion)
-        for img_file in os.listdir(emotion_folder):
-            img_path = os.path.join(emotion_folder, img_file)
-            img = load_img(img_path, color_mode="grayscale", target_size=IMG_SIZE)
-            img_arr = img_to_array(img) / 255.0
-            images.append(img_arr)
-            labels.append(idx)
-    images = np.array(images)
-    labels = to_categorical(labels, num_classes=num_classes)
-    return images, labels
-
-print("Loading training data...")
-x_train, y_train = load_data("train")
-print(f"Loaded {x_train.shape[0]} training samples.")
-
-print("Loading test data...")
-x_test, y_test = load_data("test")
-print(f"Loaded {x_test.shape[0]} test samples.")
-
-# Build model
+# Model architecture
 model = Sequential([
-    Conv2D(32, (3,3), activation='relu', input_shape=(IMG_SIZE[0], IMG_SIZE[1], 1)),
+    Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1)),
     MaxPooling2D(2,2),
     Flatten(),
     Dense(128, activation='relu'),
     Dense(num_classes, activation='softmax')
 ])
+
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-print("Training model...")
-model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=5, batch_size=64)
+# Train model
+model.fit(x_train, y_train, epochs=2, validation_data=(x_test, y_test))
 
-print("Saving model...")
-model.save("model.h5")
-print("Model training and saving complete! Download 'model.h5' from your Render workspace.")
+# Save model
+model.save('model.h5')
