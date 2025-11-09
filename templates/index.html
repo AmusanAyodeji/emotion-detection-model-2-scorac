@@ -14,7 +14,7 @@
         <input type="submit" value="Detect Emotion">
     </form>
     {% if emotion %}
-        <h3>Detected Emotion (class): {{emotion}}</h3>
+       <h3>Detected Emotion: {{ emotion }}</h3>
         <img src="{{img_path}}" width="200">
     {% endif %}
 </body>

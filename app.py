@@ -9,6 +9,12 @@ app = Flask(__name__)
 model = load_model("model.h5")  # Load your trained model
 
 DB_FILE = "emotion_users.db"
+# Define this at the top after your imports
+EMOTION_LABELS = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
+
+# Inside your index() route, after prediction:
+
+
 
 def init_db():
     if not os.path.exists(DB_FILE):
@@ -49,6 +55,9 @@ def index():
                   (name, img_path, emotion))
         conn.commit()
         conn.close()
+
+        emotion_idx = int(np.argmax(result))
+        emotion = EMOTION_LABELS[emotion_idx]
 
         return render_template('index.html', emotion=emotion, img_path=img_path)
     return render_template('index.html', emotion=None, img_path=None)
