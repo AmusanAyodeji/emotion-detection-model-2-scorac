@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emotion Detection</title>
+    {% if emotion %}
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    {% endif %}
+</head>
+<body>
+    <h2>Emotion Detection App</h2>
+    <form method="POST" enctype="multipart/form-data">
+        Name: <input type="text" name="name" required><br><br>
+        Select Image: <input type="file" name="img" required><br><br>
+        <input type="submit" value="Detect Emotion">
+    </form>
+    {% if emotion %}
+        <h3>Detected Emotion (class): {{emotion}}</h3>
+        <img src="{{img_path}}" width="200">
+    {% endif %}
+</body>
+</html>
