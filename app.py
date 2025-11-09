@@ -53,5 +53,7 @@ def index():
         return render_template('index.html', emotion=emotion, img_path=img_path)
     return render_template('index.html', emotion=None, img_path=None)
 
+port = int(os.environ.get("PORT", 10000))
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=port, debug=True)
